@@ -599,7 +599,7 @@ func TestServer_JoinWAN_viaMeshGateway(t *testing.T) {
 				Kind:    structs.ServiceKindMeshGateway,
 				ID:      "mesh-gateway",
 				Service: "mesh-gateway",
-				Meta:    map[string]string{"wanfed": "1"},
+				Meta:    map[string]string{structs.MetaWANFederationKey: "1"},
 				Port:    gwPort[0],
 			},
 		}
@@ -656,7 +656,7 @@ func TestServer_JoinWAN_viaMeshGateway(t *testing.T) {
 				Kind:    structs.ServiceKindMeshGateway,
 				ID:      "mesh-gateway",
 				Service: "mesh-gateway",
-				Meta:    map[string]string{"wanfed": "1"},
+				Meta:    map[string]string{structs.MetaWANFederationKey: "1"},
 				Port:    gwPort[0],
 			},
 		}
@@ -673,7 +673,7 @@ func TestServer_JoinWAN_viaMeshGateway(t *testing.T) {
 				Kind:    structs.ServiceKindMeshGateway,
 				ID:      "mesh-gateway",
 				Service: "mesh-gateway",
-				Meta:    map[string]string{"wanfed": "1"},
+				Meta:    map[string]string{structs.MetaWANFederationKey: "1"},
 				Port:    gwPort[0],
 			},
 		}

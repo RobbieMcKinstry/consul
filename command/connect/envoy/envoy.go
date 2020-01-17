@@ -13,6 +13,7 @@ import (
 
 	"github.com/mitchellh/mapstructure"
 
+	"github.com/hashicorp/consul/agent/structs"
 	"github.com/hashicorp/consul/agent/xds"
 	"github.com/hashicorp/consul/api"
 	proxyCmd "github.com/hashicorp/consul/command/connect/proxy"
@@ -318,7 +319,7 @@ func (c *cmd) Run(args []string) int {
 
 		var meta map[string]string
 		if c.exposeServers {
-			meta = map[string]string{"wanfed": "1"}
+			meta = map[string]string{structs.MetaWANFederationKey: "1"}
 		}
 
 		svc := api.AgentServiceRegistration{
