@@ -10,7 +10,6 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
@@ -25,6 +24,7 @@ import (
 	"github.com/hashicorp/consul/agent/connect"
 	"github.com/hashicorp/consul/agent/proxycfg"
 	"github.com/hashicorp/consul/agent/structs"
+	"github.com/hashicorp/consul/tlsutil"
 )
 
 // ADSStream is a shorter way of referring to this thing...
@@ -536,16 +536,14 @@ func (s *Server) Check(ctx context.Context, r *envoyauthz.CheckRequest) (*envoya
 
 // GRPCServer returns a server instance that can handle XDS and ext_authz
 // requests.
-func (s *Server) GRPCServer(certFile, keyFile string) (*grpc.Server, error) {
+func (s *Server) GRPCServer(tlsConfigurator *tlsutil.Configurator) (*grpc.Server, error) {
 	opts := []grpc.ServerOption{
 		grpc.MaxConcurrentStreams(2048),
 	}
-	if certFile != "" && keyFile != "" {
-		creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
-		if err != nil {
-			return nil, err
+	if tlsConfigurator != nil {
+		if cert := tlsConfigurator.Cert(); cert != nil {
+			opts = append(opts, grpc.Creds(*tlsConfigurator.TransportCredentials()))
 		}
-		opts = append(opts, grpc.Creds(creds))
 	}
 	srv := grpc.NewServer(opts...)
 	envoydisco.RegisterAggregatedDiscoveryServiceServer(srv, s)

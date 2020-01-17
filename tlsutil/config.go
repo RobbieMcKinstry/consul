@@ -12,6 +12,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"google.golang.org/grpc/credentials"
 )
 
 // DCWrapper is a function that is used to wrap a non-TLS connection
@@ -441,12 +443,7 @@ func (c *Configurator) commonTLSConfig(verifyIncoming bool) *tls.Config {
 	// autoEncrypt cert too so that a client can encrypt incoming
 	// connections without having a manual cert configured.
 	tlsConfig.GetCertificate = func(*tls.ClientHelloInfo) (*tls.Certificate, error) {
-		cert := c.manual.cert
-		if cert == nil {
-			cert = c.autoEncrypt.cert
-		}
-
-		return cert, nil
+		return c.Cert(), nil
 	}
 
 	// GetClientCertificate is used when acting as a client and responding
@@ -475,6 +472,17 @@ func (c *Configurator) commonTLSConfig(verifyIncoming bool) *tls.Config {
 	}
 
 	return tlsConfig
+}
+
+// This function acquires a read lock because it reads from the config.
+func (c *Configurator) Cert() *tls.Certificate {
+	c.RLock()
+	defer c.RUnlock()
+	cert := c.manual.cert
+	if cert == nil {
+		cert = c.autoEncrypt.cert
+	}
+	return cert
 }
 
 // This function acquires a read lock because it reads from the config.
@@ -559,6 +567,12 @@ func (c *Configurator) VerifyServerHostname() bool {
 	c.RLock()
 	defer c.RUnlock()
 	return c.base.VerifyServerHostname || c.autoEncrypt.verifyServerHostname
+}
+
+// TransportCredentials returns credentials to be used with eg a grpc server.
+func (c *Configurator) TransportCredentials() *credentials.TransportCredentials {
+	creds := credentials.NewTLS(&tls.Config{Certificates: []tls.Certificate{*c.Cert()}})
+	return &creds
 }
 
 // IncomingRPCConfig generates a *tls.Config for incoming RPC connections.
