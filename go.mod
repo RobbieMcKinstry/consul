@@ -10,6 +10,7 @@ replace launchpad.net/gocheck => github.com/go-check/check v0.0.0-20140225173054
 
 require (
 	github.com/Azure/go-autorest v10.15.3+incompatible // indirect
+	github.com/DataDog/sketches-go v0.0.0-20190923095040-43f19ad77ff7 // indirect
 	github.com/Microsoft/go-winio v0.4.3 // indirect
 	github.com/NYTimes/gziphandler v1.0.1
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
@@ -17,6 +18,7 @@ require (
 	github.com/armon/go-metrics v0.0.0-20190430140413-ec5e00d3c878
 	github.com/armon/go-radix v1.0.0
 	github.com/aws/aws-sdk-go v1.25.41
+	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/coredns/coredns v1.1.2
 	github.com/digitalocean/godo v1.10.0 // indirect
 	github.com/docker/go-connections v0.3.0
